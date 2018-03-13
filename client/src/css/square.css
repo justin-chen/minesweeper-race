@@ -1,0 +1,88 @@
+.square {
+  background: url(../images/squares.png);
+  background-position: -216px 0px;
+  background-size: auto 24px;
+  /*line-height: 34px;*/
+  height: 24px;
+  text-align: center;
+  width: 24px;
+}
+
+
+.game {
+  /*display: flex;
+  flex-direction: row;*/
+  float: center;
+}
+
+.game-info {
+  margin-left: 20px;
+}
+
+.player {
+  float: left;
+  margin-left: 10%;
+  margin-bottom: 10%
+}
+
+.opponent {
+  float: right;
+  margin-right: 10%;
+  margin-bottom: 10%
+}
+
+.mine-field{
+  width: 414px;
+}
+
+.zero-square{
+  background-position-x: 0px;
+}
+
+.one-square{
+  background-position-x: -24px;
+}
+
+.two-square{
+  background-position-x: -48px;
+}
+
+.three-square{
+  background-position-x: -72px;
+}
+
+.four-square{
+  background-position-x: -96px;
+}
+
+.five-square{
+  background-position-x: -120px;
+}
+
+.six-square{
+  background-position-x: -144px;
+}
+
+.seven-square{
+  background-position-x: -168px;
+}
+
+.eight-square{
+  background-position-x: -192px;
+}
+
+.mine-active-square{
+  background-position-x: -264px;
+}
+
+.mine-false-square{
+  background-position-x: -288px;
+}
+
+.mine-square{
+  background-position-x: -312px;
+}
+
+.flag{
+  background-position-x: -240px;
+}

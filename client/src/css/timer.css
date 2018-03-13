@@ -1,0 +1,63 @@
+.digit{
+    background: url(../images/clock.png);
+    background-size: auto 34.5px;
+    height: 34.5px;
+    width: 19.5px;
+    display: inline-block;
+}
+
+.timer{
+    padding-top: 6px;
+    padding-bottom: 4px;
+    padding-right: 7.75px;
+    vertical-align: top;
+    display: inline-block;
+}
+
+.counter{
+    padding-top: 6px;
+    padding-bottom: 4px;
+    padding-left: 7.75px;
+    vertical-align: top;
+    display: inline-block;
+}
+
+.zero-digit{
+    background-position-x: 0px;
+}
+
+.one-digit{
+    background-position-x: -19.75px;
+}
+
+.two-digit{
+    background-position-x: -39px;
+}
+
+.three-digit{
+    background-position-x: -58.5px;
+}
+
+.four-digit{
+    background-position-x: -78px;
+}
+
+.five-digit{
+    background-position-x: -97.6px;
+}
+
+.six-digit{
+    background-position-x: -117px;
+}
+
+.seven-digit{
+    background-position-x: -136.75px;
+}
+
+.eight-digit{
+    background-position-x: -156px;
+}
+
+.nine-digit{
+    background-position-x: -175.75px;
+}

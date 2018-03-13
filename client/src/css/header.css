@@ -1,0 +1,26 @@
+.header{
+    background: url('../images/faces.png');
+    background-size: auto 39px;
+    height: 39px;
+    width: 39px;
+    margin-left: 106px;
+    margin-right: 106px;
+    margin-top: 5px;
+    background-color: #bdbdbd;
+    display: inline-block;
+}
+.mouse-down{
+    background-position-x: -39px;
+}
+
+.dead{
+    background-position-x: -117px;
+}
+
+.surprise{
+    background-position-x: -78px;
+}
+
+.cool{
+    background-position-x: -156px;
+}

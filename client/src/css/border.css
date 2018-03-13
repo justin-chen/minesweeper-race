@@ -1,0 +1,74 @@
+.tlc{
+    background: url(../images/border-connectors.png);
+    background-size: auto 15px;
+    height: 15px;
+    width: 15px;
+    line-height: 0;
+}
+
+.trc{
+    background: url(../images/border-connectors.png);
+    background-position: -15px 0px;
+    background-size: auto 15px;
+    height: 15px;
+    width: 15px;
+    line-height: 0;
+}
+
+.hor{
+    background: url(../images/border-connectors.png);
+    background-position:  -60px 0;
+    background-size: auto 15px;
+    height: 15px;
+    width: 24px;
+}
+
+.blc{
+    background: url(../images/border-connectors.png);
+    background-position: -30px 0px;
+    background-size: auto 15px;
+    height: 15px;
+    width: 15px;
+
+}
+
+.brc{
+    background: url(../images/border-connectors.png);
+    background-position: -45px 0px;
+    background-size: auto 15px;
+    height: 15px;
+    width: 15px;
+}
+
+.ltc{
+    background: url(../images/border-connectors.png);
+    background-position: -84px 0px;
+    background-size: auto 15px;
+    height: 15px;
+    width: 15px;
+}
+
+.rtc{
+    background: url(../images/border-connectors.png);
+    background-position: -99px 0px;
+    background-size: auto 15px;
+    height: 15px;
+    width: 15px;
+}
+
+.v{
+    background: url(../images/border.png);
+    background-size: 15px auto;
+    height: 24px;
+    width: 15px;
+    vertical-align: top;
+
+}
+
+.v.l{
+    height: 48px;
+}
+
+.board-header{
+    background-color: #bdbdbd;
+}
