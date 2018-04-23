@@ -1,15 +1,23 @@
 import React, { Component } from 'react';
-import { flags_placed } from './board';
 import './css/square.css';
 
 class Square extends Component {
     constructor(props) {
         super(props);
+        this.socket = this.props.socket;
         this.state = {
             value: this.props.value,
             flag: this.props.flag,
             coordinate: this.props.coordinate,
         };
+
+        this.socket.on('add-flag-opponent', function (x, y) {
+            if (this.state.coordinate[0] === x && this.state.coordinate[1] === y && this.props.player === 'opponent') this.setState({ flag: 'flag' });
+        }.bind(this));
+
+        this.socket.on('remove-flag-opponent', function (x, y) {
+            if (this.state.coordinate[0] === x && this.state.coordinate[1] === y && this.props.player === 'opponent') this.setState({ flag: '' });
+        }.bind(this));
     }
 
     componentWillReceiveProps(nextProps) {
@@ -30,24 +38,22 @@ class Square extends Component {
     }
 
     getServerResponse(coordinate) {
-        if (!this.props.revealed && this.state.flag === '') {
-            this.props.socket.emit('click', coordinate[0], coordinate[1]);
+        if (!this.props.revealed && this.state.flag === '' && this.props.player === 'you') {
+            this.socket.emit('click', coordinate[0], coordinate[1]);
         }
     }
 
     flag(coordinate) {
         if (!this.props.revealed) {
             if (this.state.flag === '') {
-                this.props.socket.emit('add-flag', coordinate[0], coordinate[1]);
+                this.socket.emit('add-flag', coordinate[0], coordinate[1]);
                 this.setState({ flag: 'flag' });
             } else {
-                this.props.socket.emit('remove-flag', coordinate[0], coordinate[1]);
+                this.socket.emit('remove-flag', coordinate[0], coordinate[1]);
                 this.setState({ flag: '' });
             }
         } else if (this.state.value > 0 && !this.props.game_over) {
-            var flag_array = [];
-            flags_placed.forEach(coord => flag_array.push(coord));
-            this.props.socket.emit('reveal-neighbours', this.state.coordinate[0], this.state.coordinate[1], flag_array);
+            this.socket.emit('get-reveal-neighbours', this.state.coordinate[0], this.state.coordinate[1]);
         }
     }
 
@@ -96,12 +102,13 @@ class Square extends Component {
     }
 
     render() {
+        var allow_mouse_down = (!this.props.revealed && !this.state.flag && this.props.player === 'you');
         return (
             <div draggable="true" className={"square " + this.getIntAsString(this.state.value) + "-square " + this.state.flag}
-                onMouseDown={(e) => { if (!this.props.revealed && !this.state.flag && e.button === 0) this.setState({ value: 0 }) }}
+                onMouseDown={e => { if (allow_mouse_down && e.button === 0) this.setState({ value: 0 }) }}
                 onMouseLeave={e => { if (e.button === 0 && !this.props.revealed) this.setState({ value: null }) }}
                 onClick={this.getServerResponse.bind(this, this.props.coordinate)}
-                onContextMenu={(e) => { e.preventDefault(); this.flag(this.props.coordinate) }}
+                onContextMenu={e => {e.preventDefault(); if (this.props.player === 'you') this.flag(this.props.coordinate) }}
                 onDragStart={e => e.dataTransfer.setDragImage(new Image(), 0, 0)} onDragEnd={() => { if (!this.props.revealed) this.setState({ value: null }) }} />
         );
     }

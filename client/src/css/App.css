@@ -26,3 +26,23 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.invite-friend {
+  z-index: 1;
+  position: relative;
+  bottom: 480px;
+  background: rgba(255, 255, 255, 0.5);
+  padding-top: 150px;
+  height: 480px;
+}
+
+.invite-link {
+  margin-top: 20px;
+  background-color: white !important;
+  width: 300px !important;
+}
+
+.opponent-field {
+  z-index: 0;
+}
+

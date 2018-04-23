@@ -1,5 +1,6 @@
 const app = require('express')();
 const http = require('http').Server(app);
+const url = require('url');
 var io = require('socket.io')(http);
 
 const port = 5000;
@@ -7,6 +8,7 @@ const x_coord = [-1, -1, -1, 0, 0, 1, 1, 1];
 const y_coord = [-1, 0, 1, -1, 1, -1, 0, 1];
 
 var games = {};
+var rooms = {};
 
 
 function displayBoard(board) {
@@ -120,11 +122,17 @@ function getMines(board) {
     return mine_coords;
 }
 
-function checkClick(x, y, board, socket) {
+function checkClick(x, y, board, socket, path) {
     x = parseInt(x);
     y = parseInt(y);
     if (board[x][y] === 'X') {
-        io.to(socket.id).emit('mine', getMines(board), x, y);
+        var mines = getMines(board);
+        io.to(socket.id).emit('mine', mines, x, y);
+        if (path) {
+            io.to(rooms[path].ids[0]).emit('mine-opponent', mines, x, y);
+        } else if (rooms[socket.id].ids[1]) {
+            io.to(rooms[socket.id].ids[1]).emit('mine-opponent', mines, x, y);
+        }
     } else if (board[x][y] === 0) {
         var coord_with_values = fill(x, y, board).map(coord => {
             var row = parseInt(coord.split(',')[0]);
@@ -132,8 +140,18 @@ function checkClick(x, y, board, socket) {
             return [row, col, board[row][col]];
         });
         io.to(socket.id).emit('fill', coord_with_values);
+        if (path) {
+            io.to(rooms[path].ids[0]).emit('fill-opponent', coord_with_values);
+        } else if (rooms[socket.id].ids[1]) {
+            io.to(rooms[socket.id].ids[1]).emit('fill-opponent', coord_with_values);
+        }
     } else {
         io.to(socket.id).emit('single', board[x][y], x, y);
+        if (path) {
+            io.to(rooms[path].ids[0]).emit('single-opponent', board[x][y], x, y);
+        } else if (rooms[socket.id].ids[1]) {
+            io.to(rooms[socket.id].ids[1]).emit('single-opponent', board[x][y], x, y);
+        }
     }
 }
 
@@ -143,17 +161,44 @@ app.get('/api/hello', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+    var path = url.parse(socket.handshake.headers.referer).pathname.substring(1);
     console.log('a user connected with id' + socket.id);
     games[socket.id] = generateBoard();
 
+    if (path === '') {
+        rooms[socket.id] = {
+            ids: [socket.id]
+        };
+    } else {
+        if (rooms[path]) {
+            if (rooms[path].ids.length === 1) {
+                console.log('joining existing room');
+                rooms[path].ids.push(socket.id);
+                io.to(rooms[path].ids[0]).emit('opponent-joined');
+            } else {
+                io.to(socket.id).emit('redirect');
+            }
+        } else {
+            console.log('Redirecting');
+            io.to(socket.id).emit('redirect');
+        }
+    }
+    
     socket.on('disconnect', function () {
         console.log('user disconnected');
+        if (path && rooms[path] && rooms[path].ids[1] === socket.id) {
+            io.to(rooms[path].ids[0]).emit('opponent-left');
+            rooms[path].ids.splice(-1,1);
+        } else if (!path) {
+            io.to(rooms[socket.id].ids[1]).emit('redirect');
+        }
         delete games[socket.id];
+        delete rooms[socket.id];
     });
 
     socket.on('click', (x, y) => {
         console.log(`${socket.id} ${x} ${y}`);
-        checkClick(x, y, games[socket.id], socket);
+        checkClick(x, y, games[socket.id], socket, path);
     });
 
     socket.on('new-game', () => {
@@ -163,10 +208,29 @@ io.on('connection', (socket) => {
 
     socket.on('add-flag', (x, y) => {
         io.to(socket.id).emit('add-flag', x, y);
+        if (path) {
+            io.to(rooms[path].ids[0]).emit('add-flag-opponent', x, y);
+        } else if (rooms[socket.id].ids[1]) {
+            io.to(rooms[socket.id].ids[1]).emit('add-flag-opponent', x, y);
+        }
     });
 
     socket.on('remove-flag', (x, y) => {
         io.to(socket.id).emit('remove-flag', x, y);
+        if (path) {
+            io.to(rooms[path].ids[0]).emit('remove-flag-opponent', x, y);
+        } else if (rooms[socket.id].ids[1]) {
+            io.to(rooms[socket.id].ids[1]).emit('remove-flag-opponent', x, y);
+        }
+    });
+
+    socket.on('get-reveal-neighbours', (x, y) => {
+        io.to(socket.id).emit('get-reveal-neighbours', x, y);
+        if (path) {
+            io.to(rooms[path].ids[0]).emit('get-reveal-neighbours-opponent', x, y);
+        } else if (rooms[socket.id].ids[1]) {
+            io.to(rooms[socket.id].ids[1]).emit('get-reveal-neighbours-opponent', x, y);
+        }
     });
 
     socket.on('reveal-neighbours', (x, y, flags_placed) => {
@@ -175,10 +239,7 @@ io.on('connection', (socket) => {
             for (var i in neighbours[0]) {
                 let x = neighbours[0][i].split(',')[0];
                 let y = neighbours[0][i].split(',')[1];
-                checkClick(x, y, games[socket.id], socket);
-            }
-            if(neighbours[1] > 0){
-
+                checkClick(x, y, games[socket.id], socket, path);
             }
         }
     });

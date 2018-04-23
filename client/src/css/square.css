@@ -10,9 +10,13 @@
 
 
 .game {
-  /*display: flex;
-  flex-direction: row;*/
+  margin:0 auto;
+  text-align: center;
+}
+
+.page{
   float: center;
+  min-width: 460px;
 }
 
 .game-info {
