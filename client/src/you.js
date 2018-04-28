@@ -1,8 +1,6 @@
 
 import React, { Component } from 'react';
 import * as board from './board';
-import './css/square.css';
-import './css/border.css';
 
 class You extends Component {
     constructor(props) {
@@ -84,7 +82,7 @@ class You extends Component {
             </tr>
         );
         return (
-            <table cellSpacing="0" cellPadding="0" className="game mine-field">
+            <table cellSpacing="0" cellPadding="0" className="game mine-field" style={{marginTop: "90px"}}>
                 <thead>
                     {board.renderHeader(this)}
                 </thead>

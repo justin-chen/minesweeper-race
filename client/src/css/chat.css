@@ -1,0 +1,91 @@
+@media (max-width: 1200px) {
+    .chat{
+        width: 414px;
+        height: 300px;
+        margin: 0 auto;
+        
+    }
+}
+@media (min-width: 1200px) {
+    .chat{
+        width: 80%;
+        height: 480px;
+        margin-right: 5%;
+        float: right;
+    }
+}
+@media (min-width: 1300px) {
+    .chat{
+        margin-right: 10%;
+    }
+}
+@media (min-width: 1400px) {
+    .chat{
+        margin: 0 auto;
+        float: none;
+    }
+}
+
+.chat {
+    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    color: #f5f5f5;
+}
+
+.chat-input {
+    background-color: rgba(255, 255, 255, 0) !important;
+    color: #f5f5f5 !important;
+    border-top: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-bottom: thin solid whitesmoke !important;
+    width: 90% !important;
+    bottom: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.chat-area {
+    height: 100%;
+    padding-bottom: 60px;
+}
+
+.message-player {
+    color: rgb(0, 123, 255);
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.message-opponent {
+    color: rgb(255, 62, 62);
+    text-align: right;
+    word-wrap: break-word;
+}
+
+.join {
+    font-style: italic;
+}
+
+.messages {
+    height: 100%;
+    margin: 0;
+    overflow-y: auto;
+    padding: 10px 20px 10px 20px;
+    list-style-type: none;
+}
+
+.style-1::-webkit-scrollbar {
+    width: 5px;
+    border-radius: 10px;
+} 
+
+.style-1::-webkit-scrollbar-thumb {
+    background-color: whitesmoke;
+    border-radius: 10px;
+}
+
+.style-1::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #000000;
+}

@@ -9,7 +9,7 @@ function renderMinefield(player) {
     for (let i = 0; i < 16; i++) {
         mine_field.push([]);
         for (let j = 0; j < 16; j++) {
-            mine_field[i].push(<Square coordinate={[i, j]} socket={player.socket} value={null} revealed={false} game_over={false} flag={''} player={player.props.player}/>);
+            mine_field[i].push(<Square coordinate={[i, j]} socket={player.socket} value={null} revealed={false} game_over={false} flag={''} player={player.props.player} />);
         }
     }
     return mine_field;
@@ -27,8 +27,8 @@ function renderHeader(player) {
             <td className="v l" colSpan={1} />
             <td colSpan={16}>
                 <Counter key={[1, 1]} {...player.state} />
-                {!player.state.game_over ? <Header key={[1, 2]} socket={player.socket} face={player.state.face} timer_started={player.state.timer_started } player={player.props.player}/> :
-                    <Header key={[1, 2]} socket={player.socket} face={"dead"} player={player.props.player}/>}
+                {!player.state.game_over ? <Header key={[1, 2]} socket={player.socket} face={player.state.face} timer_started={player.state.timer_started} player={player.props.player} /> :
+                    <Header key={[1, 2]} socket={player.socket} face={"dead"} player={player.props.player} />}
                 <Timer key={[1, 3]} {...player.state} />
             </td>
             <td className="v l" colSpan={1} />
@@ -106,7 +106,7 @@ function reveal(player, value, x, y) {
     var flags = 0;
     if (arguments.length === 2) {
         for (var i in value) {
-            mine_field_copy[value[i][0]][value[i][1]] = <Square value={value[i][2]} revealed={true} flag={''} socket={player.socket} player={player.props.player}/>;
+            mine_field_copy[value[i][0]][value[i][1]] = <Square value={value[i][2]} revealed={true} flag={''} socket={player.socket} player={player.props.player} />;
             let flag = value[i][0] + ',' + value[i][1];
             if (player.flags_placed.has(flag)) {
                 flags++;
@@ -117,20 +117,20 @@ function reveal(player, value, x, y) {
             }
         }
     } else {
-        mine_field_copy[x][y] = <Square value={value} revealed={true} flag={''} socket={player.socket} player={player.props.player}/>;
+        mine_field_copy[x][y] = <Square value={value} revealed={true} flag={''} socket={player.socket} player={player.props.player} />;
         if (!player.revealed.has(x + ',' + y)) {
             player.revealed.add(x + ',' + y);
         }
     }
-    if (player.flags_placed.size === 40 && player.revealed.size === 216) {
-        gameComplete(player);
-    } else {
-        player.setState({
-            mine_field: mine_field_copy,
-            timer_started: true,
-            mines_remaining: player.state.mines_remaining + flags
-        });
-    }
+    player.setState({
+        mine_field: mine_field_copy,
+        timer_started: true,
+        mines_remaining: player.state.mines_remaining + flags
+    }, () => {
+        if (player.flags_placed.size === 40 && player.revealed.size === 216) {
+            gameComplete(player);
+        }
+    });
 };
 
-export {renderMinefield, renderHeader, renderFooter, restart, gameComplete, gameOver, reveal};
+export { renderMinefield, renderHeader, renderFooter, restart, gameComplete, gameOver, reveal };

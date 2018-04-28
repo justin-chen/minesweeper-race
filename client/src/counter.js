@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './css/timer.css';
 
 class Counter extends Component {
 

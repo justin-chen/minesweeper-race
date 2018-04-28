@@ -1,7 +1,10 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
 const http = require('http').Server(app);
 const url = require('url');
-var io = require('socket.io')(http);
+const path = require('path');
+const io = require('socket.io')(http);
+
 
 const port = 5000;
 const x_coord = [-1, -1, -1, 0, 0, 1, 1, 1];
@@ -9,18 +12,6 @@ const y_coord = [-1, 0, 1, -1, 1, -1, 0, 1];
 
 var games = {};
 var rooms = {};
-
-
-function displayBoard(board) {
-    process.stdout.write('=================================================\n');
-    for (let i = 0; i < 16; i++) {
-        for (let j = 0; j < 16; j++) {
-            process.stdout.write((board[i][j]).toString());
-        }
-        process.stdout.write('\n');
-    }
-    process.stdout.write('=================================================\n');
-}
 
 function incrementNeighbors(board, x, y) {
     for (let i = x - 1; i < (x + 2); i++) {
@@ -53,7 +44,6 @@ function generateBoard() {
             board = incrementNeighbors(board, i, j);
         }
     }
-    displayBoard(board);
     return board;
 }
 
@@ -93,7 +83,7 @@ function getUnflaggedNeighbours(x, y, flags_placed, board) {
             if (flags_placed.includes(`${new_x},${new_y}`)) {
                 flag_count++;
             } else {
-                if(board[new_x][new_y] === 'X'){
+                if (board[new_x][new_y] === 'X') {
                     mine_count++;
                     neighbours_to_reveal.push(`${new_x},${new_y}`);
                 } else {
@@ -155,14 +145,8 @@ function checkClick(x, y, board, socket, path) {
     }
 }
 
-
-app.get('/api/hello', (req, res) => {
-    res.send({ express: 'Hello From Express' });
-});
-
 io.on('connection', (socket) => {
     var path = url.parse(socket.handshake.headers.referer).pathname.substring(1);
-    console.log('a user connected with id' + socket.id);
     games[socket.id] = generateBoard();
 
     if (path === '') {
@@ -172,20 +156,17 @@ io.on('connection', (socket) => {
     } else {
         if (rooms[path]) {
             if (rooms[path].ids.length === 1) {
-                console.log('joining existing room');
                 rooms[path].ids.push(socket.id);
                 io.to(rooms[path].ids[0]).emit('opponent-joined');
             } else {
                 io.to(socket.id).emit('redirect');
             }
         } else {
-            console.log('Redirecting');
             io.to(socket.id).emit('redirect');
         }
     }
     
     socket.on('disconnect', function () {
-        console.log('user disconnected');
         if (path && rooms[path] && rooms[path].ids[1] === socket.id) {
             io.to(rooms[path].ids[0]).emit('opponent-left');
             rooms[path].ids.splice(-1,1);
@@ -197,13 +178,17 @@ io.on('connection', (socket) => {
     });
 
     socket.on('click', (x, y) => {
-        console.log(`${socket.id} ${x} ${y}`);
         checkClick(x, y, games[socket.id], socket, path);
     });
 
     socket.on('new-game', () => {
         games[socket.id] = generateBoard();
         io.to(socket.id).emit('new-game');
+        if (path) {
+            io.to(rooms[path].ids[0]).emit('new-game-opponent');
+        } else if (rooms[socket.id].ids[1]) {
+            io.to(rooms[socket.id].ids[1]).emit('new-game-opponent');
+        }
     });
 
     socket.on('add-flag', (x, y) => {
@@ -226,11 +211,6 @@ io.on('connection', (socket) => {
 
     socket.on('get-reveal-neighbours', (x, y) => {
         io.to(socket.id).emit('get-reveal-neighbours', x, y);
-        if (path) {
-            io.to(rooms[path].ids[0]).emit('get-reveal-neighbours-opponent', x, y);
-        } else if (rooms[socket.id].ids[1]) {
-            io.to(rooms[socket.id].ids[1]).emit('get-reveal-neighbours-opponent', x, y);
-        }
     });
 
     socket.on('reveal-neighbours', (x, y, flags_placed) => {
@@ -244,6 +224,17 @@ io.on('connection', (socket) => {
         }
     });
 
-});
+    socket.on('msg', (msg) => {
+        if (path) {
+            io.to(rooms[path].ids[0]).emit('opponent-msg', msg);
+        } else if (rooms[socket.id].ids[1]) {
+            io.to(rooms[socket.id].ids[1]).emit('opponent-msg', msg);
+        }
+    });
 
-http.listen(port, () => console.log(`Listening on port ${port}`));
+});
+app.use('/', express.static(`client/build`));
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve('client/build', 'index.html'));
+});
+http.listen(port);

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import * as board from './board';
-import './css/square.css';
-import './css/border.css';
 
 class Opponent extends Component {
     constructor(props) {
@@ -27,12 +25,10 @@ class Opponent extends Component {
         }.bind(this));
 
         this.socket.on('single-opponent', function (value, x, y) {
-            console.log('OPP-SINGLE');
             board.reveal(this, value, x, y);
         }.bind(this));
 
         this.socket.on('fill-opponent', function (coords) {
-            console.log('OPP-FILL');
             board.reveal(this, coords);
         }.bind(this));
 
@@ -85,7 +81,7 @@ class Opponent extends Component {
             </tr>
         );
         return (
-            <table cellSpacing="0" cellPadding="0" className="game mine-field">
+            <table cellSpacing="0" cellPadding="0" className="game mine-field" style={{marginTop: "90px"}}> 
                 <thead>
                     {board.renderHeader(this)}
                 </thead>

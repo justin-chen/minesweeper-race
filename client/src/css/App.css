@@ -22,9 +22,10 @@
   font-size: large;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.bgimg {
+  background-image: url('../images/bedroom.gif');
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .invite-friend {
@@ -32,8 +33,10 @@
   position: relative;
   bottom: 480px;
   background: rgba(255, 255, 255, 0.5);
+  margin: 0 auto;
   padding-top: 150px;
   height: 480px;
+  width: 414px;
 }
 
 .invite-link {
@@ -46,3 +49,42 @@
   z-index: 0;
 }
 
+.footer {
+  z-index: 2;
+  position: absolute;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (min-width: 1200px) {
+  .page-height{
+    height: 100vh;
+  }
+  .footer{
+    right: 10%;
+    bottom: 5%;
+  }
+}
+@media (max-width: 460px) {
+  .bgimg {
+    width:460px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .page-height{
+    height: 100%;
+  }
+  .footer{
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    bottom: 20%;
+  }
+}
