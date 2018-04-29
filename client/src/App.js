@@ -11,14 +11,14 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.socket = io('http://localhost:5000');
+    this.socket = io('/');
 
     this.socket.on('connect', function () {
       this.setState({ socket_ready: true });
     }.bind(this));
 
     this.socket.on('redirect', function () {
-      window.location.replace('http://' + window.location.hostname + ':' + window.location.port);
+      window.location.replace('https://' + window.location.hostname + ':' + window.location.port);
     });
 
     this.socket.on('opponent-joined', function () {
@@ -60,11 +60,11 @@ class App extends Component {
               </div>
               <div className="invite-friend" style={{ zIndex: this.state.opponent_joined ? "-1" : "1" }}>
                 <h3>Race against a friend</h3>
-                Send the link below to your opponentd:
+                Send the link below to your opponents:
                 <br />
                 {this.state.socket_ready &&
                   <div >
-                    <FormControl style={{ display: 'inline-block' }} bsSize="small" readOnly type="text" className="invite-link" id="InviteLink" value={'http://' + window.location.hostname + ':5000/' + this.socket.io.engine.id} />
+                    <FormControl style={{ display: 'inline-block' }} bsSize="small" readOnly type="text" className="invite-link" id="InviteLink" value={'https://' + window.location.hostname + '/' + this.socket.io.engine.id} />
                     <Button style={{ marginBottom: '4px' }} bsStyle="primary" onClick={this.copyToClipboard.bind(this)}>Copy</Button>
                   </div>
                 }

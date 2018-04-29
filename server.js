@@ -165,11 +165,11 @@ io.on('connection', (socket) => {
             io.to(socket.id).emit('redirect');
         }
     }
-    
+
     socket.on('disconnect', function () {
         if (path && rooms[path] && rooms[path].ids[1] === socket.id) {
             io.to(rooms[path].ids[0]).emit('opponent-left');
-            rooms[path].ids.splice(-1,1);
+            rooms[path].ids.splice(-1, 1);
         } else if (!path) {
             io.to(rooms[socket.id].ids[1]).emit('redirect');
         }
