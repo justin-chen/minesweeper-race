@@ -6,6 +6,7 @@ Real-time multiplayer Minesweeper and chat room, allowing you to play with/again
 https://minesweeper-race.herokuapp.com/
 
 ## TODO
+* Implement right click workaround for mobile devices (long press)
 * Revisit Socket.IO room implementation, use of namespaces
 * Add help modal with game instructions
 
